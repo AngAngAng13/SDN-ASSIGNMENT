@@ -9,7 +9,7 @@
     "build:server": "tsc",
     "build": "npm run build:server && npm run build:client && npm run build:css && npm run copy-assets",
     "copy-assets": "cpx \"src/{views,public}/**/*\" dist",
-    "build:css": "npx @tailwindcss/cli src/public/stylesheets/style.css -o src/public/stylesheets/output.css",
+    "build:css": "npx @tailwindcss/cli -i src/public/stylesheets/style.css -o src/public/stylesheets/output.css",
     "watch:css": "npx @tailwindcss/cli -i src/public/stylesheets/style.css -o src/public/stylesheets/output.css --watch",
     "watch:client": "webpack --watch",
     "start:server": "npx tsx watch --env-file .env src/app.ts",
