@@ -1,0 +1,46 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Dev: Frontend",
+            "type": "shell",
+            "command": "npm run dev",
+            "options": {
+                "cwd": "${workspaceFolder}/frontend"
+            },
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Dev: Backend",
+            "type": "shell",
+            "command": "npm run dev",
+            "options": {
+                "cwd": "${workspaceFolder}/backend"
+            },
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Dev: Fullstack",
+            "type": "shell",
+            "command": "npm run dev",
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Build: All",
+            "type": "shell",
+            "command": "npm run build",
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Start: Server",
+            "type": "shell",
+            "command": "npm start",
+            "group": "test",
+            "problemMatcher": []
+        }
+    ]
+}
