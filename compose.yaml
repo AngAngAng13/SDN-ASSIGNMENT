@@ -1,0 +1,33 @@
+services:
+  app:
+    container_name: sdn-app-backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    networks:
+      - sdn-network
+    depends_on:
+      - mongo
+    restart: unless-stopped
+  mongo:
+    image: mongo:latest
+    container_name: sdn-app-mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - sdn-network
+    restart: unless-stopped
+networks:
+  sdn-network:
+    name: sdn-network
+
+volumes:
+  mongo-data:
+    name: sdn-mongo-data
