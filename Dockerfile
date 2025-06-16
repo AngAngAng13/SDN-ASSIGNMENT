@@ -17,11 +17,12 @@ COPY package.json package-lock.json ./
 
 COPY --from=builder /app/dist ./dist
 
-COPY --from=builder /app/src/views ./src/views
-COPY --from=builder /app/src/public ./src/public
+COPY --from=builder /app/src/views ./dist/views
+COPY --from=builder /app/src/public ./dist/public
 
 ENV NODE_ENV=production
-
 EXPOSE 8443
+
+USER root
 
 CMD ["node", "dist/app.js"]

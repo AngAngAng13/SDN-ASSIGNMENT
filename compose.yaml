@@ -13,8 +13,10 @@ services:
     depends_on:
       - mongo
     restart: unless-stopped
+    # FIX: 'volumes' must be indented to be a property of the 'app' service
     volumes:
-      - '/etc/letsencrypt/live/aang.blog:/etc/ssl/certs:ro'
+      - './certs:/etc/ssl/certs:ro'
+  
   mongo:
     image: mongo:latest
     container_name: sdn-app-mongo
@@ -26,6 +28,7 @@ services:
     networks:
       - sdn-network
     restart: unless-stopped
+
 networks:
   sdn-network:
     name: sdn-network
@@ -33,3 +36,4 @@ networks:
 volumes:
   mongo-data:
     name: sdn-mongo-data
+
