@@ -1,6 +1,15 @@
 import mongoose from "mongoose";
+export interface IMember extends mongoose.Document {
+    membername: string;
+    password: string;
+    name: string;
+    YOB: number;
+    isAdmin: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
 const memberSchema = new mongoose.Schema({
-    memberName:{
+    membername:{
         type: String,
         required: true,
     },
@@ -22,6 +31,6 @@ const memberSchema = new mongoose.Schema({
     },
    
 },{timestamps: true});
-const Member = mongoose.model('Member', memberSchema);
+const Member = mongoose.model<IMember>('Member', memberSchema);
 export default Member;
 

@@ -22,6 +22,6 @@ COPY --from=builder /app/src/public ./src/public
 
 ENV NODE_ENV=production
 
-EXPOSE 3000
+EXPOSE 8443
 
 CMD ["node", "dist/app.js"]

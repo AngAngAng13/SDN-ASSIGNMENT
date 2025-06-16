@@ -18,7 +18,11 @@ const config = {
     ],
   },
   resolve: {
-    extensions: ['.ts', '.js'],
+    extensionAlias: {
+     '.js': ['.ts', '.js'],
+     '.mjs': ['.mts', '.mjs'],
+     '.cjs': ['.cts', '.cjs']
+    } 
   },
   output: {
     filename: 'bundle.js',

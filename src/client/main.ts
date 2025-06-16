@@ -1,91 +1,30 @@
 import $ from 'jquery';
 
-interface RegisterFormData {
-  [key: string]: string | number | boolean;
-}
+import themeController from './modules/theme.js';
+import { handleFormSubmit } from './modules/forms.js';
 
-$(() => { 
-  
-  const themeController = {
-    controller: document.querySelector('.theme-controller') as HTMLInputElement,
-
-    init() {
-    
-      const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-      if (this.controller) {
-        this.controller.checked = currentTheme === 'dark';
-      }
-      this.listen();
-    },
-
-    listen() {
-      if (!this.controller) return;
-      $(this.controller).on('change', (e) => {
-        const target = e.target as HTMLInputElement;
-        const theme = target.checked ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme);
-      });
-    },
-  };
-
+$(() => {
   themeController.init();
 
-  const $registerForm = $('#register-form');
+  handleFormSubmit({
+    formId: 'register-form',
+    submitButtonId: 'register-submit-button',
+    errorDivId: 'register-form-error',
+    apiUrl: '/auth/register',
+    onSuccess: (response) => {
+      alert(response.message || 'Registration successful! Please log in.');
+      window.location.href = '/login';
+    },
+  });
 
-  if ($registerForm.length) {
-    $registerForm.on('submit', (event) => {
-      event.preventDefault();
-
-      const $submitButton = $('#submit-button');
-      const $errorDiv = $('#form-error');
-      const originalButtonText = $submitButton.data('original-text') || 'Submit';
-      
-      const formData = $registerForm.serializeArray();
-      const data: RegisterFormData = {};
-
-      formData.forEach((field) => {
-        data[field.name] = field.value;
-      });
-
-      data.YOB = Number(data.YOB);
-      data.isAdmin = $('#isAdmin').is(':checked');
-
-      $.ajax({
-        url: '/auth/register',
-        method: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(data),
-
-        beforeSend: () => {
-          $errorDiv.text('');
-          $submitButton.prop('disabled', true)
-                       .addClass('btn-disabled loading')
-                       .html('<span class="loading loading-spinner"></span> Submitting...');
-        },
-
-        success: (_response) => {
-           alert('Registration successful! Redirecting to login page...');
-        },
-
-        error: (jqXHR) => {
-          let errorMessage = 'An unknown error occurred.';
-          if (jqXHR.responseJSON) {
-            const errorData = jqXHR.responseJSON;
-            errorMessage = errorData.message || errorMessage;
-            if (errorData.errors) {
-              errorMessage = Object.values(errorData.errors).join(', ');
-            }
-          }
-          $errorDiv.text(errorMessage);
-        },
-
-        complete: () => {
-          $submitButton.prop('disabled', false)
-                       .removeClass('btn-disabled loading')
-                       .html(originalButtonText);
-        }
-      });
-    });
-  }
+  handleFormSubmit({
+    formId: 'login-form',
+    submitButtonId: 'login-submit-button',
+    errorDivId: 'login-form-error', 
+    apiUrl: '/auth/login',
+    onSuccess: (response) => {
+      alert('Login Successful!');
+      window.location.href = '/';
+    },
+  });
 });

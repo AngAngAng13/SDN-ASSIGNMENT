@@ -1,8 +1,11 @@
 import { Router } from "express";
-import { userController } from "../controllers/user.controller.js";
+import { authController } from "../controllers/auth.controller.js";
+import { validateRequest } from "../middlewares/validateRequest.js";
+import { loginSchema, registerSchema } from "../schemas/user.schema.js";
+
 const authRouter = Router();
-authRouter.get("/login", (req, res) => {
-  res.render("login");
-});
-authRouter.post("/register", userController.register);
+
+authRouter.post("/register", validateRequest(registerSchema), authController.register);
+authRouter.post("/login", validateRequest(loginSchema), authController.login);
+authRouter.post("/logout", authController.logout);
 export default authRouter;

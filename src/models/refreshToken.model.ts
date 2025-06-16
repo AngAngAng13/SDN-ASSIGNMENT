@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
-import Member from "./member.model.js";
 const refreshTokenSchema = new mongoose.Schema({
     token: {
         type: String,
         required: true,
+        unique: true,
     },
     user_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: Member,
+        ref: "Member",
         required: true,
     },
     exp: {
