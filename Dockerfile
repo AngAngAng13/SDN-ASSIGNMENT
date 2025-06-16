@@ -6,8 +6,8 @@ RUN npm install
 FROM base AS builder
 WORKDIR /app
 COPY . .
-RUN npm run build:server
-RUN npm run build:client
+RUN npm run build
+
 
 FROM node:24-alpine AS production
 WORKDIR /app
