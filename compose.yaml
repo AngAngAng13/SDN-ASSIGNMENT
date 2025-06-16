@@ -13,6 +13,8 @@ services:
     depends_on:
       - mongo
     restart: unless-stopped
+    volumes:
+      - '/etc/letsencrypt/live/aang.blog:/etc/ssl/certs:ro'
   mongo:
     image: mongo:latest
     container_name: sdn-app-mongo
