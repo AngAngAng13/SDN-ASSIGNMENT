@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 export interface IMember extends mongoose.Document {
     membername: string;
     password: string;
@@ -8,29 +9,33 @@ export interface IMember extends mongoose.Document {
     createdAt: Date;
     updatedAt: Date;
 }
+
 const memberSchema = new mongoose.Schema({
-    membername:{
+    membername: {
         type: String,
         required: true,
+        unique: true,
+        lowercase: true,
+        trim: true,
     },
     password: {
         type: String,
         required: true,
     },
-    name:{
+    name: {
         type: String,
         required: true,
     },
-    YOB:{
-        type: Number, // epoch time 
+    YOB: {
+        type: Number,
         required: true,
     },
     isAdmin: {
         type: Boolean,
-        default: false, 
+        default: false,
     },
-   
-},{timestamps: true});
+
+}, { timestamps: true });
+
 const Member = mongoose.model<IMember>('Member', memberSchema);
 export default Member;
-

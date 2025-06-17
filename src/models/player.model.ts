@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Comment from "./comment.model.js";
+import "./team.model.js";
 const playerSchema = new mongoose.Schema({
     playerName: {  type:String, required: true },
     image : { type: String, required: true },
