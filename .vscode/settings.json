@@ -4,7 +4,11 @@
     },
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "html.format.enable": false,
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": "explicit",
+    },
+    "[html]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
 }

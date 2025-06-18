@@ -1,42 +1,59 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/stylesheets/output.css" />
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel='stylesheet' href='/stylesheets/output.css' />
     <script>
-        (function () {
-            const theme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', theme);
-        })();
+      (function () {
+        const theme = localStorage.getItem("theme") || "light";
+        document.documentElement.setAttribute("data-theme", theme);
+      })();
     </script>
     <title>Login</title>
-    <script src="/javascripts/bundle.js"></script>
-</head>
+  </head>
 
-<body class="bg-base-200">
-    <%- include('shares/_topbar.ejs') %>
-        <main class="min-h-screen flex items-center justify-center -mt-16 p-4">
-            <div class="w-full max-w-md bg-base-100 rounded-xl shadow-lg p-8 flex flex-col items-center gap-6">
-                <h1 class="text-3xl font-bold text-primary mb-2">Login</h1>
-                <form id="login-form" class="w-full flex flex-col gap-4">
-                    <div class="flex flex-col gap-1">
-                        <label for="membername" class="font-medium text-base-content">Member Name</label>
-                        <input type="text" name="membername" id="membername" required
-                            class="input input-bordered w-full" />
-                    </div>
-                    <div class="flex flex-col gap-1">
-                        <label for="password" class="font-medium text-base-content">Password</label>
-                        <input type="password" name="password" id="password" required
-                            class="input input-bordered w-full" />
-                    </div>
-                    <div id="login-form-error" class="text-error text-sm text-center h-4"></div>
-                    <button id="login-submit-button" class="btn btn-primary w-full mt-2" type="submit"
-                        data-original-text="Login">Login</button>
-                </form>
-            </div>
-        </main>
-</body>
+  <body class="bg-base-200">
+    <%- include('shares/_topbar') %>
 
+    <main class="-mt-16 flex min-h-screen items-center justify-center p-4">
+      <div class="bg-base-100 flex w-full max-w-md flex-col items-center gap-6 rounded-xl p-8 shadow-lg">
+        <h1 class="text-primary mb-2 text-3xl font-bold">Login</h1>
+        <form id="login-form" class="flex w-full flex-col gap-4">
+          <div>
+            <label class="label" for="membername">
+              <span class="label-text">Member Name</span>
+            </label>
+            <input type="text" name="membername" id="membername" required class="input input-bordered w-full" />
+            <label class="label">
+              <span class="label-text-alt text-error" data-error-for="membername"></span>
+            </label>
+          </div>
+
+          <div>
+            <label class="label" for="password">
+              <span class="label-text">Password</span>
+            </label>
+            <input type="password" name="password" id="password" required class="input input-bordered w-full" />
+            <label class="label">
+              <span class="label-text-alt text-error" data-error-for="password"></span>
+            </label>
+          </div>
+
+          <div id="login-form-error" class="text-error h-4 text-center text-sm"></div>
+
+          <button id="login-submit-button" class="btn btn-primary mt-2 w-full" type="submit" data-original-text="Login">
+            Login
+          </button>
+        </form>
+        <div class="mt-4 text-center">
+          <p class="inline">Don't have an account?</p>
+          <a href="/register" class="text-primary ml-1 font-semibold hover:underline">Register</a>
+        </div>
+      </div>
+    </main>
+  </body>
 </html>
+
+<script src="/javascripts/bundle.js"></script>

@@ -1,0 +1,64 @@
+
+<% const formatCost = (cost) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(cost); %>
+
+<div 
+  class="card player-card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
+  data-player-name="<%- player.playerName.toLowerCase() %>"
+  data-team-id="<%- player.team._id %>"
+  data-is-captain="<%- player.isCaptain %>"
+>
+  <a href="/players/<%- player._id %>" class="block">
+    <div class="relative">
+      <figure class="px-4 pt-4">
+        <img 
+          src="<%- player.image %>" 
+          alt="<%- player.playerName %>"
+          class="rounded-xl w-full h-48 object-cover"
+          loading="lazy"
+        />
+      </figure>
+      <% if (player.isCaptain) { %>
+        <div class="absolute top-6 right-6">
+          <div class="badge badge-accent gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-crown-icon lucide-crown"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></svg>
+            Captain
+          </div>
+        </div>
+      <% } %>
+    </div>
+    
+    <div class="card-body">
+      <h2 class="card-title text-lg font-bold">
+        <%- player.playerName %>
+        <% if (player.isCaptain) { %>
+          <span class="text-accent">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-crown-icon lucide-crown"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></svg>
+          </span>
+        <% } %>
+      </h2>
+      
+      <div class="flex items-center gap-2 text-sm text-base-content/70">
+        <span class="badge badge-primary badge-outline">
+          <%- player.team.teamName %>
+        </span>
+      </div>
+      
+      <p class="text-base-content/80 text-sm line-clamp-2 mt-2 h-[40px]">
+        <%- player.information %>
+      </p>
+      
+      <div class="card-actions justify-between items-center mt-4">
+        <div class="text-lg font-bold text-success">
+          <%- formatCost(player.cost) %>
+        </div>
+        
+        <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1 text-sm text-base-content/70">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle-icon lucide-message-circle"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+            <span><%- player.comments.length %></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </a>
+</div>

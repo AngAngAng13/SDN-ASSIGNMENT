@@ -1,0 +1,16 @@
+<div id="team-form-card" class="card bg-base-100 shadow-xl hidden">
+  <div class="card-body">
+    <h3 class="card-title" id="team-form-title">Add New Team</h3>
+    <form id="team-form" class="space-y-4">
+      <input type="hidden" name="teamId" />
+      <div class="form-control">
+        <label class="label"><span class="label-text">Team Name</span></label>
+        <input type="text" name="teamName" class="input input-bordered" placeholder="Enter team name" required />
+      </div>
+      <div class="flex gap-2">
+        <button type="submit" class="btn btn-primary" id="team-form-submit-btn">Add Team</button>
+        <button type="button" class="btn btn-ghost" id="team-form-cancel-btn">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>

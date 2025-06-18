@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="/stylesheets/output.css" />
+  </head>
+<body class="bg-base-200">
+    <%- include('../shares/_topbar') %>
+
+    <main class="container mx-auto p-4 lg:p-6">
+        <div class="space-y-6">
+            <div class="text-center">
+                <h1 class="text-3xl font-bold">Admin Dashboard</h1>
+                <p class="text-base-content/60 mt-2">Manage teams and players</p>
+            </div>
+
+            <div class="stats stats-vertical lg:stats-horizontal w-full shadow">
+                <div class="stat">
+                    <div class="stat-title">Total Teams</div>
+                    <div class="stat-value text-primary"><%= teams.length %></div>
+                </div>
+                <div class="stat">
+                    <div class="stat-title">Total Players</div>
+                    <div class="stat-value text-secondary"><%= players.length %></div>
+                </div>
+                <div class="stat">
+                    <div class="stat-title">Team Captains</div>
+                    <div class="stat-value text-accent"><%= players.filter(p => p.isCaptain).length %></div>
+                </div>
+            </div>
+
+            <div class="tabs tabs-boxed" id="admin-tabs">
+                <button class="tab tab-active" data-tab="teams">Teams</button>
+                <button class="tab" data-tab="players">Players</button>
+            </div>
+
+            <div id="teams-content" class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-bold">Teams Management</h2>
+                    <button id="add-team-btn" class="btn btn-primary btn-sm gap-2">Add Team</button>
+                </div>
+                <%- include('../partials/_team-form') %>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <% teams.forEach(team => { %>
+                        <div class="card bg-base-100 shadow-md" data-team-id="<%= team._id %>" data-team-name="<%= team.teamName %>">
+                            <div class="card-body">
+                                <h3 class="card-title"><%= team.teamName %></h3>
+                                <p class="text-sm text-base-content/60">
+                                    Players: <%= players.filter(p => p.team._id.toString() === team._id.toString()).length %>
+                                </p>
+                                <div class="card-actions justify-end">
+                                    <button class="btn btn-ghost btn-xs edit-team-btn">Edit</button>
+                                    <button class="btn btn-ghost btn-xs text-error delete-team-btn">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+
+            <div id="players-content" class="hidden space-y-4">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-bold">Players Management</h2>
+                    <button id="add-player-btn" class="btn btn-primary btn-sm gap-2">Add Player</button>
+                </div>
+                <%- include('../partials/_player-form', { teams: teams }) %>
+                <div class="overflow-x-auto">
+                    <table class="table table-zebra w-full">
+                        <thead>
+                            <tr>
+                                <th>Player</th>
+                                <th>Team</th>
+                                <th>Cost</th>
+                                <th>Captain</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% players.forEach(player => { %>
+                                <tr data-player='<%- JSON.stringify(player) %>'>
+                                    <td>
+                                        <div class="flex items-center gap-3">
+                                            <div class="avatar"><div class="mask mask-squircle w-12 h-12"><img src="<%= player.image %>" /></div></div>
+                                            <div><div class="font-bold"><%= player.playerName %></div></div>
+                                        </div>
+                                    </td>
+                                    <td><%= player.team.teamName %></td>
+                                    <td class="font-bold text-success">$<%= player.cost.toLocaleString() %></td>
+                                    <td><% if (player.isCaptain) { %> 👑 <% } %></td>
+                                    <td>
+                                        <div class="flex gap-2">
+                                            <button class="btn btn-ghost btn-xs edit-player-btn">Edit</button>
+                                            <button class="btn btn-ghost btn-xs text-error delete-player-btn">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="/javascripts/bundle.js"></script>
+</body>
+</html> 

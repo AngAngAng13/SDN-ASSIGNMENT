@@ -23,9 +23,9 @@ const centralErrorHandler: ErrorRequestHandler = (err, req, res, _next) => {
     });
   }
   else {
-    res.status(500).render('error', {
-      message: 'An internal server error occurred.',
-      error: process.env.NODE_ENV === 'development' ? err : {},
+    res.render('error', {
+      message: 'Internal server error',
+      error: err,
     });
   }
 };

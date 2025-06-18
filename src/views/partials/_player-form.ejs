@@ -1,0 +1,45 @@
+<div id="player-form-card" class="card bg-base-100 shadow-xl hidden">
+    <div class="card-body">
+        <h3 class="card-title" id="player-form-title">Add New Player</h3>
+        <form id="player-form" class="space-y-4">
+            <input type="hidden" name="playerId" />
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="form-control">
+                    <label class="label"><span class="label-text">Player Name</span></label>
+                    <input type="text" name="playerName" class="input input-bordered" required />
+                </div>
+                <div class="form-control">
+                    <label class="label"><span class="label-text">Team</span></label>
+                    <select name="team" class="select select-bordered" required>
+                        <option value="" disabled selected>Select Team</option>
+                        <% teams.forEach(team => { %>
+                            <option value="<%= team._id %>"><%= team.teamName %></option>
+                        <% }) %>
+                    </select>
+                </div>
+                <div class="form-control">
+                    <label class="label"><span class="label-text">Image URL</span></label>
+                    <input type="url" name="image" class="input input-bordered" required />
+                </div>
+                <div class="form-control">
+                    <label class="label"><span class="label-text">Cost ($)</span></label>
+                    <input type="number" name="cost" class="input input-bordered" min="0" required />
+                </div>
+            </div>
+            <div class="form-control">
+                <label class="label"><span class="label-text">Information</span></label>
+                <textarea name="information" class="textarea textarea-bordered h-24" required></textarea>
+            </div>
+            <div class="form-control">
+                <label class="label cursor-pointer justify-start gap-4">
+                    <input type="checkbox" name="isCaptain" class="checkbox checkbox-accent" />
+                    <span class="label-text">Team Captain</span>
+                </label>
+            </div>
+            <div class="flex gap-2">
+                <button type="submit" class="btn btn-primary" id="player-form-submit-btn">Add Player</button>
+                <button type="button" class="btn btn-ghost" id="player-form-cancel-btn">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
