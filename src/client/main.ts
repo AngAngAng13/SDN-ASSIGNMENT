@@ -22,9 +22,11 @@ $(() => {
     errorDivId: "register-form-error",
     apiUrl: "api/auth/register",
     onSuccess: (response) => {
-                  showNotificationModal("Registration Successful!", response.message || "Please log in with your new account.");
-
-      window.location.href = "/login";
+      showNotificationModal("Registration Successful!", response.message );
+      setTimeout(() => {
+         window.location.href = "/";
+      }, 3000);
+     
     },
   });
 
