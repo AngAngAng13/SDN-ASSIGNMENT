@@ -7,6 +7,8 @@ import { initPlayerDetailPage } from "./modules/playerDetail.js";
 import { initProfilePage } from "./modules/profile.js";
 import { initAdminDashboard } from "./modules/admin.js";
 import { initAuthUI } from "./modules/authUI.js";
+import { showNotificationModal } from "./modules/modal.js";
+
 $(() => {
   themeController.init();
   initPlayerFilters();
@@ -20,7 +22,8 @@ $(() => {
     errorDivId: "register-form-error",
     apiUrl: "api/auth/register",
     onSuccess: (response) => {
-      alert(response.message || "Registration successful! Please log in.");
+                  showNotificationModal("Registration Successful!", response.message || "Please log in with your new account.");
+
       window.location.href = "/login";
     },
   });
