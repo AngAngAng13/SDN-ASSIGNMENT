@@ -31,8 +31,6 @@ $(() => {
     errorDivId: "login-form-error",
     apiUrl: "api/auth/login",
     onSuccess: (response) => {
-      alert("Login Successful!");
-      alert(response.accessToken || "Welcome back!");
       if (response.accessToken) {
         localStorage.setItem("accessToken", response.accessToken);
       }

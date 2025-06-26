@@ -1,19 +1,169 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en" data-theme="night">
 <head>
-    <title>Error</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <title>Error: <%= message %></title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@latest/dist/full.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 </head>
 
-<body>
-    <h1>
-        <%= message %>
-    </h1>
-    <h2>
-        <%= error.status %>
-    </h2>
-    <pre><%= error.stack %></pre>
-</body>
+<body class="min-h-screen bg-base-200 font-sans">
 
+    <div class="hidden">
+        <span class="text-green-400"></span><span class="text-purple-400"></span><span class="text-blue-400"></span>
+        <span class="text-orange-400"></span><span class="text-pink-400"></span><span class="text-teal-400"></span>
+        <span class="text-yellow-400"></span><span class="text-neutral-400"></span><span class="text-neutral-500"></span>
+        <span class="text-primary"></span><span class="text-warning"></span><span class="text-info"></span>
+    </div>
+
+    <div id="error-data" data-stack="<%= JSON.stringify(error.stack || '') %>" class="hidden"></div>
+
+    <div class="container mx-auto p-4 lg:p-8">
+        <div class="card w-full bg-base-100 shadow-xl">
+            <div class="card-body">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                         <% if (error.errors) { %>
+                            <div class="text-error"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 13.5a2.5 2.5 0 0 1-5 0V11a2.5 2.5 0 0 1 5 0V13.5z"/><path d="M12 21a7 7 0 0 0 7-7c0-3.5-2-7-7-7s-7 3.5-7 7a7 7 0 0 0 7 7z"/><path d="M12 11V4"/><path d="M6 11.5a2.5 2.5 0 0 1 0-5"/><path d="M18 11.5a2.5 2.5 0 0 0 0-5"/></svg></div>
+                        <% } else { %>
+                           <div class="text-error"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg></div>
+                        <% } %>
+                        <div>
+                            <h1 class="text-3xl font-bold text-error"><%= error.status || 500 %> - <%= message %></h1>
+                             <p class="text-base-content/60"><%= req.method %> <%= req.originalUrl %></p>
+                        </div>
+                    </div>
+                    <div class="flex-shrink-0">
+                        <button id="copy-button" class="btn btn-outline btn-primary btn-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                            Copy Full Error
+                        </button>
+                    </div>
+                </div>
+
+                <% if (error.errors && Object.keys(error.errors).length > 0) { %>
+                <div class="divider"></div>
+                <h2 class="text-xl font-semibold mb-2">Validation Errors</h2>
+                <div class="bg-base-200 p-4 rounded-lg">
+                    <ul class="space-y-2">
+                        <% for (const [field, msg] of Object.entries(error.errors)) { %>
+                        <li class="flex items-start">
+                            <span class="font-mono text-sm bg-error/20 text-error-content py-1 px-2 rounded-md mr-4"><%= field %>:</span>
+                            <span class="text-base-content/80"><%= msg %></span>
+                        </li>
+                        <% } %>
+                    </ul>
+                </div>
+                <% } %>
+                
+                <div id="code-snippet-container" class="hidden">
+                    <div class="divider"></div>
+                    <h2 class="text-xl font-semibold">Error Location</h2>
+                    <div class="mockup-code bg-base-300 text-base-content my-4 text-left">
+                        <pre><code id="code-snippet" class="language-javascript"></code></pre>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+                <h2 class="text-xl font-semibold">Stack Trace</h2>
+                <div class="mockup-code bg-base-300 text-base-content my-4">
+                    <pre id="stack-trace" class="p-4 overflow-x-auto"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/stacktrace-parser@0.1.10/dist/stacktrace-parser.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 2. Read the data from the DOM attribute and parse it
+            const errorDataEl = document.getElementById('error-data');
+            const rawStack = JSON.parse(errorDataEl.dataset.stack);
+
+            const stackTraceContainer = document.getElementById('stack-trace');
+            const codeSnippetContainer = document.getElementById('code-snippet-container');
+            const codeSnippetEl = document.getElementById('code-snippet');
+
+            const getPathClass = (path) => {
+                if (!path) return 'text-neutral-400';
+                if (path.includes('node_modules')) return 'text-neutral-500';
+                if (path.includes('controllers/')) return 'text-green-400';
+                if (path.includes('services/')) return 'text-purple-400';
+                if (path.includes('models/')) return 'text-blue-400';
+                if (path.includes('middlewares/')) return 'text-orange-400';
+                if (path.includes('schemas/')) return 'text-pink-400';
+                if (path.includes('routes/')) return 'text-teal-400';
+                if (path.includes('config/')) return 'text-yellow-400';
+                return 'text-neutral-400';
+            };
+            
+            function extractAndHighlightCode(stackString) {
+                const lines = stackString.split('\n'); // Split by real newline
+                const codeSnippetLines = [];
+                const codeLineRegex = /^\s*>?\s*\d+\s*\|/;
+                
+                let foundCode = false;
+                for(const line of lines) {
+                    if (codeLineRegex.test(line)) {
+                        const cleanLine = line.substring(line.indexOf('|') + 1);
+                        codeSnippetLines.push(cleanLine);
+                        foundCode = true;
+                    } else {
+                        if (foundCode) break;
+                    }
+                }
+
+                if (codeSnippetLines.length > 0) {
+                    codeSnippetEl.textContent = codeSnippetLines.join('\n');
+                    codeSnippetContainer.classList.remove('hidden');
+                    hljs.highlightElement(codeSnippetEl);
+                }
+            }
+            
+            try {
+                const parsedStack = stacktraceParser.parse(rawStack);
+                if (parsedStack.length > 0) {
+                    let html = '';
+                    const errorMessageLine = rawStack.split('\n')[0];
+                    html += `<div class="text-error-content bg-error/20 p-2 rounded-md mb-2">${errorMessageLine}</div>`;
+
+                    parsedStack.forEach((frame, index) => {
+                        const pathClass = getPathClass(frame.file);
+                        const filePath = frame.file ? `<span class="${pathClass}">${frame.file}</span>` : '<span class="text-gray-500">[unknown file]</span>';
+                        const lineNumber = frame.lineNumber ? `:<span class="text-warning">${frame.lineNumber}</span>` : '';
+                        const columnNumber = frame.column ? `:<span class="text-info">${frame.column}</span>` : '';
+                        const methodName = frame.methodName ? `<span class="text-primary font-semibold">${frame.methodName}</span>` : '<span class="text-gray-400">[anonymous]</span>';
+
+                        html += `<div class="flex items-start gap-4 py-1 px-2 hover:bg-base-200/50 rounded-md">
+                                    <span class="text-right w-8 text-gray-500">${String(index + 1)}</span>
+                                    <div>at ${methodName} (${filePath}${lineNumber}${columnNumber})</div>
+                               </div>`;
+                    });
+                    stackTraceContainer.innerHTML = html;
+                } else {
+                    stackTraceContainer.textContent = rawStack;
+                }
+            } catch (e) {
+                console.error("Failed to parse stack trace:", e);
+                stackTraceContainer.textContent = rawStack;
+            }
+
+            extractAndHighlightCode(rawStack);
+            
+            const copyButton = document.getElementById('copy-button');
+            copyButton.addEventListener('click', () => {
+                navigator.clipboard.writeText(rawStack).then(() => {
+                    copyButton.innerText = 'Copied!';
+                    setTimeout(() => {
+                        copyButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg> Copy Full Error`;
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                });
+            });
+        });
+    </script>
+</body>
 </html>

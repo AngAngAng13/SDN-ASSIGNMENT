@@ -12,10 +12,22 @@ adminRouter.get("/dashboard", async (req, res, next) => {
   try {
     const players = await playerService.getAllPlayers();
     const teams = await teamService.getAllTeams();
+
+    const teamsWithPlayerCount = await Promise.all(
+      teams.map(async (team) => {
+        const playerCount = await teamService.getTeamPlayerCount(team._id.toString());
+        return {
+          _id: team._id,
+          teamName: team.teamName,
+          playerCount: playerCount
+        };
+      })
+    );
+
     res.render("admin/dashboard", {
       title: "Admin Dashboard",
       players,
-      teams,
+      teams: teamsWithPlayerCount, 
     });
   } catch (error) {
     next(error);

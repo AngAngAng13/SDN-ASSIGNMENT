@@ -65,7 +65,9 @@ export const checkAuth = async (req: AuthenticatedRequest, res: Response, next: 
 
 export const checkAdmin = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   if (!req.user || !req.user.isAdmin) {
-    return next(new ErrorWithStatus({ message: "Forbidden: Admin access required", status: 403 }));
+    return res.redirect("/login");
+    //return next(new ErrorWithStatus({ message: "Forbidden: Admin access required", status: 403 }));
+    
   }
   next();
 };

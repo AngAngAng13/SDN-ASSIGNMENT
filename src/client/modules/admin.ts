@@ -1,10 +1,10 @@
 import $ from "jquery";
+import { showConfirmationModal, showNotificationModal, showErrorModal } from "./modal.js";
+import { callApi } from "./api.js";
 
 export const initAdminDashboard = () => {
   const $page = $("#admin-tabs");
-  if ($page.length === 0) return; 
-
-  const accessToken = localStorage.getItem("accessToken");
+  if ($page.length === 0) return;
 
   const $tabs = $page.find(".tab");
   const $teamsContent = $("#teams-content");
@@ -26,12 +26,11 @@ export const initAdminDashboard = () => {
     $playerForm.find('[name="playerId"]').val("");
   };
 
-  
   $tabs.on("click", function () {
     const tabName = $(this).data("tab");
     $tabs.removeClass("tab-active");
     $(this).addClass("tab-active");
-    hideForms(); 
+    hideForms();
 
     $teamsContent.toggleClass("hidden", tabName !== "teams");
     $playersContent.toggleClass("hidden", tabName !== "players");
@@ -57,42 +56,52 @@ export const initAdminDashboard = () => {
     $teamFormCard.removeClass("hidden");
   });
 
-  $teamsContent.on("click", ".delete-team-btn", function () {
-    if (!confirm("Are you sure you want to delete this team?")) return;
+  $teamsContent.on("click", ".delete-team-btn", async function () {
+    const $card = $(this).closest(".card");
+    const teamId = $card.data("team-id");
+    const teamName = $card.data("team-name");
+    const playerCount = parseInt($card.data("player-count"), 10);
 
-    const teamId = $(this).closest(".card").data("team-id");
-    $.ajax({
-      url: `/api/teams/${teamId}`,
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${accessToken}` },
-      success: () => {
-        alert("Team deleted!");
-        location.reload();
-      },
-      error: (err) => alert(`Error: ${err.responseJSON?.message || "Could not delete team."}`),
-    });
+    let confirmationMessage = `Are you sure you want to delete the team "${teamName}"?`;
+    if (playerCount > 0) {
+      confirmationMessage += `\n\nThis action is irreversible and will also permanently delete the <strong>${playerCount} player(s)</strong> associated with this team.`;
+    }
+
+    const confirmed = await showConfirmationModal("Confirm Deletion", confirmationMessage, "Yes, Delete");
+
+    if (!confirmed) return;
+
+    try {
+      const response = await callApi({
+        url: `/api/teams/${teamId}`,
+        method: "DELETE",
+      });
+      showNotificationModal("Success", response.message || "Team deleted successfully!");
+    } catch (err: any) {
+      showErrorModal(err.responseJSON?.message || "Could not delete team.");
+    }
   });
 
-  $teamForm.on("submit", function (e) {
+  $teamForm.on("submit", async function (e) {
     e.preventDefault();
     const teamId = $(this).find('[name="teamId"]').val();
     const teamName = $(this).find('[name="teamName"]').val();
-
     const isEditing = !!teamId;
+
     const url = isEditing ? `/api/teams/${teamId}` : "/api/teams";
     const method = isEditing ? "PUT" : "POST";
 
-    $.ajax({
-      url: url,
-      method: method,
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
-      data: JSON.stringify({ teamName }),
-      success: () => {
-        alert(`Team ${isEditing ? "updated" : "added"}!`);
-        location.reload();
-      },
-      error: (err) => alert(`Error: ${err.responseJSON?.message || "Could not save team."}`),
-    });
+    try {
+      await callApi({
+        url: url,
+        method: method,
+        contentType: "application/json",
+        data: JSON.stringify({ teamName }),
+      });
+      showNotificationModal("Success", `Team ${isEditing ? "updated" : "added"}!`);
+    } catch (err: any) {
+      showErrorModal(err.responseJSON?.message || "Could not save team.");
+    }
   });
 
   $("#team-form-cancel-btn").on("click", hideForms);
@@ -107,7 +116,7 @@ export const initAdminDashboard = () => {
   $playersContent.on("click", ".edit-player-btn", function () {
     hideForms();
     const playerData = $(this).closest("tr").data("player");
-
+   
     $playerForm.find("#player-form-title").text("Edit Player");
     $playerForm.find('[name="playerId"]').val(playerData._id);
     $playerForm.find('[name="playerName"]').val(playerData.playerName);
@@ -120,23 +129,27 @@ export const initAdminDashboard = () => {
     $playerFormCard.removeClass("hidden");
   });
 
-  $playersContent.on("click", ".delete-player-btn", function () {
-    if (!confirm("Are you sure you want to delete this player?")) return;
+  $playersContent.on("click", ".delete-player-btn", async function () {
+    const confirmed = await showConfirmationModal(
+      "Confirm Deletion",
+      "Are you sure you want to delete this player?",
+      "Yes, Delete"
+    );
+    if (!confirmed) return;
 
     const playerId = $(this).closest("tr").data("player")._id;
-    $.ajax({
-      url: `/api/players/${playerId}`,
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${accessToken}` },
-      success: () => {
-        alert("Player deleted!");
-        location.reload();
-      },
-      error: (err) => alert(`Error: ${err.responseJSON?.message || "Could not delete player."}`),
-    });
+    try {
+      await callApi({
+        url: `/api/players/${playerId}`,
+        method: "DELETE",
+      });
+      showNotificationModal("Success", "Player deleted!");
+    } catch (err: any) {
+      showErrorModal(err.responseJSON?.message || "Could not delete player.");
+    }
   });
 
-  $playerForm.on("submit", function (e) {
+  $playerForm.on("submit", async function (e) {
     e.preventDefault();
     const playerId = $(this).find('[name="playerId"]').val();
     const playerData = {
@@ -152,17 +165,17 @@ export const initAdminDashboard = () => {
     const url = isEditing ? `/api/players/${playerId}` : "/api/players";
     const method = isEditing ? "PUT" : "POST";
 
-    $.ajax({
-      url: url,
-      method: method,
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
-      data: JSON.stringify(playerData),
-      success: () => {
-        alert(`Player ${isEditing ? "updated" : "added"}!`);
-        location.reload();
-      },
-      error: (err) => alert(`Error: ${err.responseJSON?.message || "Could not save player."}`),
-    });
+    try {
+      await callApi({
+        url: url,
+        method: method,
+        contentType: "application/json",
+        data: JSON.stringify(playerData),
+      });
+      showNotificationModal("Success", `Player ${isEditing ? "updated" : "added"}!`);
+    } catch (err: any) {
+      showErrorModal(err.responseJSON?.message || "Could not save player.");
+    }
   });
 
   $("#player-form-cancel-btn").on("click", hideForms);
