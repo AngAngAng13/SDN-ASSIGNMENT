@@ -15,7 +15,8 @@ export const memberController = {
 
   getOwnProfile: (req: AuthenticatedRequest, res: Response) => {
     //eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...profile } = req.user!;
+    
+    const { password, ...profile } = req.user?.toObject()!;
     res.status(200).json(profile);
   },
 
