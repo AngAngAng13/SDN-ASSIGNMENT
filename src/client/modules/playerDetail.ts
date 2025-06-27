@@ -56,7 +56,7 @@ export const initPlayerDetailPage = () => {
             });
             showNotificationModal("Success!", "Your comment has been submitted successfully.");
         } catch (err: any) {
-            const errorMsg = err.responseJSON?.message || "Failed to submit comment.";
+            const errorMsg = err.responseJSON?.errors?.content|| err.responseJSON?.message || "Failed to submit comment.";
             showErrorModal(errorMsg);
         }
     });

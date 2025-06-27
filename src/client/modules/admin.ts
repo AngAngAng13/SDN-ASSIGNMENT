@@ -84,6 +84,8 @@ export const initAdminDashboard = () => {
 
   $teamForm.on("submit", async function (e) {
     e.preventDefault();
+    console.log("Submitting team form..."); 
+    const $submitBtn = $(this).find("#team-form-submit-btn");
     const teamId = $(this).find('[name="teamId"]').val();
     const teamName = $(this).find('[name="teamName"]').val();
     const isEditing = !!teamId;
@@ -92,6 +94,8 @@ export const initAdminDashboard = () => {
     const method = isEditing ? "PUT" : "POST";
 
     try {
+      $submitBtn.addClass("loading").prop("disabled", true);
+
       await callApi({
         url: url,
         method: method,
@@ -101,6 +105,8 @@ export const initAdminDashboard = () => {
       showNotificationModal("Success", `Team ${isEditing ? "updated" : "added"}!`);
     } catch (err: any) {
       showErrorModal(err.responseJSON?.message || "Could not save team.");
+    } finally {
+      $submitBtn.removeClass("loading").prop("disabled", false);
     }
   });
 
@@ -116,7 +122,7 @@ export const initAdminDashboard = () => {
   $playersContent.on("click", ".edit-player-btn", function () {
     hideForms();
     const playerData = $(this).closest("tr").data("player");
-   
+
     $playerForm.find("#player-form-title").text("Edit Player");
     $playerForm.find('[name="playerId"]').val(playerData._id);
     $playerForm.find('[name="playerName"]').val(playerData.playerName);
