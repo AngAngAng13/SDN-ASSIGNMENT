@@ -48,6 +48,7 @@ export const initAdminDashboard = () => {
     const $card = $(this).closest(".card");
     const teamId = $card.data("team-id");
     const teamName = $card.data("team-name");
+    $teamFormCard[0].scrollIntoView({ behavior: "smooth", block: "start" });
 
     $teamForm.find("#team-form-title").text("Edit Team");
     $teamForm.find('[name="teamId"]').val(teamId);
@@ -84,7 +85,7 @@ export const initAdminDashboard = () => {
 
   $teamForm.on("submit", async function (e) {
     e.preventDefault();
-    console.log("Submitting team form..."); 
+    console.log("Submitting team form...");
     const $submitBtn = $(this).find("#team-form-submit-btn");
     const teamId = $(this).find('[name="teamId"]').val();
     const teamName = $(this).find('[name="teamName"]').val();
@@ -104,7 +105,7 @@ export const initAdminDashboard = () => {
       });
       showNotificationModal("Success", `Team ${isEditing ? "updated" : "added"}!`);
     } catch (err: any) {
-      showErrorModal(err.responseJSON?.message || "Could not save team.");
+      showErrorModal(err.responseJSON?.errors?.teamName || err.responseJSON?.message || "Could not save team.");
     } finally {
       $submitBtn.removeClass("loading").prop("disabled", false);
     }
@@ -117,6 +118,7 @@ export const initAdminDashboard = () => {
     $playerForm.find("#player-form-title").text("Add New Player");
     $playerForm.find("#player-form-submit-btn").text("Add Player");
     $playerFormCard.removeClass("hidden");
+    $playerFormCard[0].scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
   $playersContent.on("click", ".edit-player-btn", function () {
@@ -133,6 +135,7 @@ export const initAdminDashboard = () => {
     $playerForm.find('[name="isCaptain"]').prop("checked", playerData.isCaptain);
     $playerForm.find("#player-form-submit-btn").text("Update Player");
     $playerFormCard.removeClass("hidden");
+    $playerFormCard[0].scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
   $playersContent.on("click", ".delete-player-btn", async function () {

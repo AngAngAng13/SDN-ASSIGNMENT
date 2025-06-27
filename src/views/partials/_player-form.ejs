@@ -5,11 +5,11 @@
             <input type="hidden" name="playerId" />
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="form-control">
-                    <label class="label"><span class="label-text">Player Name</span></label>
+                    <label class="label flex flex-row items-center gap-3"><span class="label-text">Player Name</span></label>
                     <input type="text" name="playerName" class="input input-bordered" required />
                 </div>
                 <div class="form-control">
-                    <label class="label"><span class="label-text">Team</span></label>
+                    <label class="label flex flex-row items-center gap-3"><span class="label-text">Team</span></label>
                     <select name="team" class="select select-bordered" required>
                         <option value="" disabled selected>Select Team</option>
                         <% teams.forEach(team => { %>
@@ -18,20 +18,22 @@
                     </select>
                 </div>
                 <div class="form-control">
-                    <label class="label"><span class="label-text">Image URL</span></label>
+                    <label class="label flex flex-row items-center gap-3"><span class="label-text">Image URL</span></label>
                     <input type="url" name="image" class="input input-bordered" required />
                 </div>
                 <div class="form-control">
-                    <label class="label"><span class="label-text">Cost ($)</span></label>
+                    <label class="label flex flex-row items-center gap-3"><span class="label-text">Cost ($)</span></label>
                     <input type="number" name="cost" class="input input-bordered" min="0" required />
                 </div>
             </div>
             <div class="form-control">
-                <label class="label"><span class="label-text">Information</span></label>
-                <textarea name="information" class="textarea textarea-bordered h-24" required></textarea>
+                <label class="label flex flex-row items-center gap-3">
+                    <span class="label-text">Information</span>
+                </label>
+                <textarea name="information" class="textarea textarea-bordered  h-44 w-full" required></textarea>
             </div>
             <div class="form-control">
-                <label class="label cursor-pointer justify-start gap-4">
+                <label class="label cursor-pointer flex flex-row items-center gap-4">
                     <input type="checkbox" name="isCaptain" class="checkbox checkbox-accent" />
                     <span class="label-text">Team Captain</span>
                 </label>

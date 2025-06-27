@@ -5,6 +5,13 @@ import Player from "../models/player.model.js";
 import logger from "../config/logger.js";
 export const teamService = {
   async createTeam(input: TeamInput) {
+    const existingTeam = await Team.findOne({
+      teamName: { $regex: `^${input.teamName}$`, $options: "i" },
+    });
+
+    if (existingTeam) {
+      throw new ErrorWithStatus({ message: "A team with this name already exists.", status: 409 });
+    }
     const team = new Team(input);
     await team.save();
     return team;
@@ -53,7 +60,6 @@ export const teamService = {
     }
   },
 
-  
   async getTeamPlayerCount(teamId: string): Promise<number> {
     return Player.countDocuments({ team: teamId });
   },
