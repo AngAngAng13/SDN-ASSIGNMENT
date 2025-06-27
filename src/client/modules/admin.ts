@@ -45,12 +45,13 @@ export const initAdminDashboard = () => {
 
   $teamsContent.on("click", ".edit-team-btn", function () {
     hideForms();
+
     const $card = $(this).closest(".card");
     const teamId = $card.data("team-id");
     const teamName = $card.data("team-name");
     $teamFormCard[0].scrollIntoView({ behavior: "smooth", block: "start" });
 
-    $teamForm.find("#team-form-title").text("Edit Team");
+    $teamFormCard.find("#team-form-title").text("Edit Team");
     $teamForm.find('[name="teamId"]').val(teamId);
     $teamForm.find('[name="teamName"]').val(teamName);
     $teamForm.find("#team-form-submit-btn").text("Update Team");
@@ -125,7 +126,7 @@ export const initAdminDashboard = () => {
     hideForms();
     const playerData = $(this).closest("tr").data("player");
 
-    $playerForm.find("#player-form-title").text("Edit Player");
+    $playerFormCard.find("#player-form-title").text("Edit Player");
     $playerForm.find('[name="playerId"]').val(playerData._id);
     $playerForm.find('[name="playerName"]').val(playerData.playerName);
     $playerForm.find('[name="team"]').val(playerData.team._id);
